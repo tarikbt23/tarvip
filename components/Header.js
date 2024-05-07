@@ -96,7 +96,7 @@ const categories = [
       {
         title: 'Aksesuar ve Ekipmanlar',
         items: ['Tüm Aksesuar ve Ekipmanlar', 'Çantalar ve Sırt Çantaları', 'Çoraplar']
-      }
+      },
     ]
   }
 ];
@@ -112,7 +112,9 @@ const Header = () => {
     setActiveCategory(null);
   };
   
-  
+    const getGridTemplateColumns = (columns) => {
+    return `repeat(${columns.length}, minmax(200px, 1fr))`;
+  };
 
   return (
     <header>
@@ -162,7 +164,8 @@ const Header = () => {
                   <li key={category.name} onMouseEnter={() => handleMouseEnter(category.name)} onMouseLeave={handleMouseLeave} className="w-full">
                     <Link href="#" className="py-4 px-6 inline-block hover:text-gray-500 w-full text-center">{category.name}</Link>
                     {activeCategory === category.name && (
-                    <div className="absolute bg-white shadow-md mt-1 grid grid-cols-2 md:grid-cols-4 gap-4 p-4 w-full left-0 right-0">
+                    <div className="absolute bg-white shadow-md border-t-2 border-black mt-1 grid grid-cols-2 md:grid-cols-4 gap-4 p-4 w-full left-0 right-0"
+                    style={{ display: 'grid', gridTemplateColumns: getGridTemplateColumns(category.columns), gap: '4px', padding: '4px' }}>
                       {category.columns.map((column, index) => (
                         <div key={index} className="flex flex-col">
                           <span className="font-bold mb-2">{column.title}</span>
