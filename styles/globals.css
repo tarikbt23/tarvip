@@ -70,12 +70,4 @@
   transition: opacity 300ms, transform 300ms;
 }
 
-.dropdown-content {
-  display: none;
-  position: absolute;
-  left: 0; /* Ekranın en solundan başlat */
-  width: 100vw; /* Tam ekran genişliğinde */
-  box-sizing: border-box; /* Padding ve border'ı genişlik hesaplamasına dahil et */
-  top: 100%; /* Menü butonunun hemen altında */
-  z-index: 1; /* Z-index ile diğer içeriklerin üzerinde yer almasını sağla */
-}
+

@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion';
 import { IoClose } from 'react-icons/io5';
-import {State, City } from 'country-state-city';
+import { State, City } from 'country-state-city';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 
-const AddressModal = ({ isOpen, onClose }) => {
-  const [state, setState] = useState(''); // İl için state
-  const [city, setCity] = useState(''); // İlçe için state
-  const [states, setStates] = useState([]); 
+const AddressModal = ({ isOpen, onClose, onAddAddress, editAddress }) => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+    state: '',
+    city: '',
+    postalCode: '',
+    address: '',
+    addressTitle: '',
+    invoiceType: 'Bireysel'
+  });
+  const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [invoiceType, setInvoiceType] = useState('Bireysel'); //default: Bireysel
-  const [phoneNumber, setPhoneNumber] = useState('');
 
   const modalVariants = {
     hidden: { opacity: 0, y: 50, scale: 0.95 },
@@ -19,74 +26,104 @@ const AddressModal = ({ isOpen, onClose }) => {
     exit: { opacity: 0, y: -50, scale: 0.95 }
   };
 
-  const changeInvoiceType = (type) => {
-    setInvoiceType(type);
+  useEffect(() => {
+    if (editAddress) {
+      setFormData(editAddress);
+    }
+  }, [editAddress]);
+
+  useEffect(() => {
+    setStates(State.getStatesOfCountry('TR'));
+  }, []);
+
+  useEffect(() => {
+    if (formData.state) {
+      setCities(City.getCitiesOfState('TR', formData.state));
+    }
+  }, [formData.state]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
   };
 
-    // Türkiye için illeri yükleme
-    useEffect(() => {
-      setStates(State.getStatesOfCountry("TR")); // "TR" Türkiye'nin ülke kodu
-    }, []);
-
-    // Seçili il değiştiğinde ilçeleri yükleme
-    useEffect(() => {
-      if (state) {
-        setCities(City.getCitiesOfState("TR", state));
-      }
-    }, [state]);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onAddAddress(formData);
+    onClose();
+  };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center overflow-hidden">
       <div className="relative bg-white p-6 rounded-lg max-w-xl h-full md:h-[97vh] w-full overflow-y-auto">
-      <div className="flex justify-between items-center border-b-2 border-gray-200 pb-4">
-          <h2 className="text-xl font-medium">Adres Ekle</h2>
+        <div className="flex justify-between items-center border-b-2 border-gray-200 pb-4">
+          <h2 className="text-xl font-medium">Adres {editAddress ? 'Düzenle' : 'Ekle'}</h2>
           <button
             onClick={onClose}
             className="p-1 text-gray-500 hover:text-gray-800 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500"
             aria-label="Close"
           >
-            <IoClose className="h-6 w-6" /> 
+            <IoClose className="h-6 w-6" />
           </button>
         </div>
-        
-        <form>
-          <div className="grid grid-cols-2 gap-4  mt-2 md:mt-3 lg:mt-4">
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-2 gap-4 mt-2 md:mt-3 lg:mt-4">
             <div>
               <label className="block text-gray-700 text-base font-bold mb-2">Ad*</label>
-              <input type="text" placeholder="Adınızı Giriniz" className="form-input mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm" required />
+              <input
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                placeholder="Adınızı Giriniz"
+                className="form-input mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm"
+                required
+              />
             </div>
             <div>
               <label className="block text-gray-700 text-base font-bold mb-2">Soyad*</label>
-              <input type="text" placeholder="Soyadınızı Giriniz" className="form-input mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm" required />
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                placeholder="Soyadınızı Giriniz"
+                className="form-input mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm"
+                required
+              />
             </div>
             <div>
-            <label className="block text-gray-700 text-base font-bold mb-2">Telefon*</label>
-            <PhoneInput
-              country={'tr'}
-              value={phoneNumber}
-              onChange={setPhoneNumber}
-              inputClass="form-input mt-1 block w-full p-2p-2rounded-md shadow-sm"
-              inputStyle={{
-                width: '100%', 
-                height: '40px' 
-              }}
-              containerStyle={{
-                width: '100%' 
-              }}
-              dropdownStyle={{
-                width: '500%' 
-              }}
-              required
-            />
+              <label className="block text-gray-700 text-base font-bold mb-2">Telefon*</label>
+              <PhoneInput
+                country={'tr'}
+                value={formData.phone}
+                onChange={(phone) => setFormData({ ...formData, phone })}
+                inputClass="form-input mt-1 block w-full p-2 rounded-md shadow-sm"
+                inputStyle={{
+                  width: '100%',
+                  height: '40px'
+                }}
+                containerStyle={{
+                  width: '100%'
+                }}
+                dropdownStyle={{
+                  width: '500%'
+                }}
+                required
+              />
             </div>
             <div>
-            <label className="block text-gray-700 text-base font-bold mb-2">İl*</label>
+              <label className="block text-gray-700 text-base font-bold mb-2">İl*</label>
               <select
+                name="state"
+                value={formData.state}
+                onChange={handleChange}
                 className="form-select mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm"
-                value={state}
-                onChange={(e) => setState(e.target.value)}
                 required
               >
                 <option value="">Seçiniz</option>
@@ -98,11 +135,12 @@ const AddressModal = ({ isOpen, onClose }) => {
               </select>
             </div>
             <div>
-            <label className="block text-gray-700 text-base font-bold mb-2">İlçe*</label>
+              <label className="block text-gray-700 text-base font-bold mb-2">İlçe*</label>
               <select
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
                 className="form-select mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
                 required
               >
                 <option value="">Seçiniz</option>
@@ -115,13 +153,23 @@ const AddressModal = ({ isOpen, onClose }) => {
             </div>
             <div>
               <label className="block text-gray-700 text-base font-normal mb-2">Posta Kodu</label>
-              <input type="text" className="form-input mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm" placeholder='Posta Kodunu Giriniz'/>
+              <input
+                type="text"
+                name="postalCode"
+                value={formData.postalCode}
+                onChange={handleChange}
+                className="form-input mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm"
+                placeholder="Posta Kodunu Giriniz"
+              />
             </div>
             <div className="col-span-2">
               <label className="block text-gray-700 text-base font-bold mb-2">Adres*</label>
-              <label className="block text-gray-400 text-md  mb-2">Kargonuzun size sorunsuz bir şekilde ulaşabilmesi için mahalle, cadde, sokak, bina gibi detay bilgileri eksiksiz girdiğinizden emin olun.</label>
+              <label className="block text-gray-400 text-md mb-2">Kargonuzun size sorunsuz bir şekilde ulaşabilmesi için mahalle, cadde, sokak, bina gibi detay bilgileri eksiksiz girdiğinizden emin olun.</label>
               <textarea
-                className="form-textarea mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm "
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                className="form-textarea mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm"
                 rows="3"
                 placeholder="Cadde, mahalle sokak ve diğer bilgileri giriniz."
                 required
@@ -129,7 +177,14 @@ const AddressModal = ({ isOpen, onClose }) => {
             </div>
             <div className="col-span-2">
               <label className="block text-gray-700 text-base font-bold mb-2">Adres Başlığı*</label>
-              <input type="text" className="form-input mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm" required />
+              <input
+                type="text"
+                name="addressTitle"
+                value={formData.addressTitle}
+                onChange={handleChange}
+                className="form-input mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm"
+                required
+              />
             </div>
           </div>
           <div className="mb-4 mt-2 md:mt-3 lg:mt-4">
@@ -137,49 +192,73 @@ const AddressModal = ({ isOpen, onClose }) => {
             <div className="flex">
               <button
                 type="button"
-                className={`flex-1 border-2 p-3 rounded-l-lg ${invoiceType === 'Bireysel' ? 'bg-white text-orange-500 border-orange-500' : 'bg-gray-50 border-2 border-gray-300 text-gray-500'}`}
-                onClick={() => changeInvoiceType('Bireysel')}
+                className={`flex-1 border-2 p-3 rounded-l-lg ${formData.invoiceType === 'Bireysel' ? 'bg-white text-orange-500 border-orange-500' : 'bg-gray-50 border-2 border-gray-300 text-gray-500'}`}
+                onClick={() => setFormData({ ...formData, invoiceType: 'Bireysel' })}
               >
                 Bireysel
               </button>
               <button
                 type="button"
-                className={`flex-1 border-2 p-3  rounded-r-lg ${invoiceType === 'Kurumsal' ? 'bg-white text-orange-500 border-orange-500' : 'bg-gray-50 border-2 border-gray-300 text-gray-500'}`}
-                onClick={() => changeInvoiceType('Kurumsal')}
+                className={`flex-1 border-2 p-3 rounded-r-lg ${formData.invoiceType === 'Kurumsal' ? 'bg-white text-orange-500 border-orange-500' : 'bg-gray-50 border-2 border-gray-300 text-gray-500'}`}
+                onClick={() => setFormData({ ...formData, invoiceType: 'Kurumsal' })}
               >
                 Kurumsal
               </button>
             </div>
           </div>
           <AnimatePresence>
-          {invoiceType === 'Kurumsal' && (
-            <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className='grid grid-cols-2 gap-4'>
-              <div className="mb-2">
-                <label className="block text-gray-700 text-base font-bold mb-2">VKN*</label>
-                <input type="text" placeholder='VKN Giriniz' className="form-input mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm" required />
-              </div>
-              <div className="mb-2">
-                <label className="block text-gray-700 text-base font-bold mb-2">Vergi Dairesi*</label>
-                <input type="text" placeholder='Vergi Dairesi Giriniz' className="form-input mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm" required />
-              </div>
-              <div className="mb-2">
-                <label className="block text-gray-700 text-base font-bold mb-2">Firma Adı*</label>
-                <input type="text" placeholder='Firma Adı Giriniz' className="form-input mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm" required />
-              </div>
-            </div>
-            </motion.div>
-          )}
+            {formData.invoiceType === 'Kurumsal' && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="mb-2">
+                    <label className="block text-gray-700 text-base font-bold mb-2">VKN*</label>
+                    <input
+                      type="text"
+                      name="vkn"
+                      value={formData.vkn}
+                      onChange={handleChange}
+                      className="form-input mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm"
+                      placeholder="VKN Giriniz"
+                      required
+                    />
+                  </div>
+                  <div className="mb-2">
+                    <label className="block text-gray-700 text-base font-bold mb-2">Vergi Dairesi*</label>
+                    <input
+                      type="text"
+                      name="taxOffice"
+                      value={formData.taxOffice}
+                      onChange={handleChange}
+                      className="form-input mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm"
+                      placeholder="Vergi Dairesi Giriniz"
+                      required
+                    />
+                  </div>
+                  <div className="mb-2">
+                    <label className="block text-gray-700 text-base font-bold mb-2">Firma Adı*</label>
+                    <input
+                      type="text"
+                      name="companyName"
+                      value={formData.companyName}
+                      onChange={handleChange}
+                      className="form-input mt-1 block w-full p-2 rounded-md bg-gray-50 border-2 border-gray-300 shadow-sm"
+                      placeholder="Firma Adı Giriniz"
+                      required
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
-
-          {/* Submit button */}
           <div>
-            <button type="submit" className=" w-full p-2 mt-4 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-md">Kaydet</button>
+            <button type="submit" className="w-full p-2 mt-4 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-md">
+              Kaydet
+            </button>
           </div>
         </form>
       </div>

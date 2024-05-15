@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import Link from 'next/link'
-import { FaSearch } from "react-icons/fa";
 import { VscAccount } from "react-icons/vsc";
 import { IoCartOutline } from "react-icons/io5";
 import { MdOutlineFavoriteBorder } from "react-icons/md";
@@ -193,13 +192,9 @@ const Header = () => {
               <IoCartOutline className='text-3xl'/>
               <Link href='/Address' className='font-normal'>Sepetim</Link>
             </div>
-            
-            
           </div>
         </nav>
       </div>
-
-      {/* Nike Section */}
       <div className='py-1 text-black bg-gray-100'>
         <div className='items-center justify-between space-x-8 md:space-x-12 lg:space-x-16 px-64'>
           {/* Navigation */}
@@ -216,7 +211,7 @@ const Header = () => {
                       animate="visible" 
                       exit="hidden" 
                       variants={dropdownVariants}
-                      className="absolute bg-white  mt-1 grid gap-4 p-4 w-full left-0 right-0"
+                      className="absolute bg-white  mt-1 grid gap-4 p-4 w-full left-0 right-0 z-40"
                       style={{ gridTemplateColumns: getGridTemplateColumns(category.columns) }}>
                       {category.columns.map((column, index) => (
                         <div key={index} className="flex flex-col">
