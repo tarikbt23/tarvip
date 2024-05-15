@@ -191,7 +191,7 @@ const Header = () => {
             </div>
             <div className='flex items-center group space-x-2 hover:text-orange-400'>
               <IoCartOutline className='text-3xl'/>
-              <Link href='' className='font-normal'>Sepetim</Link>
+              <Link href='/Address' className='font-normal'>Sepetim</Link>
             </div>
             
             
