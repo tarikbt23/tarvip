@@ -1,5 +1,6 @@
 import ProductSlider from "../components/slidableServices";
 import ProcessSteps from "../components/processSteps";
+import References from "../components/testimonials";
 
 export default function Home() {
   return (
@@ -9,6 +10,9 @@ export default function Home() {
       </div>
       <div className="w-full max-w-screen-lg p-4">
         <ProcessSteps/>
+      </div>
+      <div className="w-full max-w-screen-lg p-4">
+        <References/>
       </div>
     </div>
   );

@@ -1,0 +1,27 @@
+[
+    {
+      "id": 1,
+      "title": "Bir CAD Dosyası Yükle",
+      "description": "Tek bir teklif oluşturmak için\nfarklı parçalara yönelik birden fazla\ntasarımı aynı anda içe aktarılabilir.\nBir dakikadan kısa bir sürede ekranda\nayrıntılı bir maliyet tahmini belirir.",
+      "image": "/images/1.png"
+    },
+    {
+      "id": 2,
+      "title": "Süreci Belirle",
+      "description": "Öncelikle ihtiyacınız olan üretim\nteknolojisini seçin. Onlarca metal ve\nplastik malzeme, gelişmiş kaplamalar\nve sertifikalarla üretime başlayın.",
+      "image": "/images/2.png"
+    },
+    {
+      "id": 3,
+      "title": "Parçalarınızı Sipariş Edin",
+      "description": "Gerekli seçenekleri seçtikten sonra\ntek yapmanız gereken siparişi\nonaylamak ve güvenli ödeme\nplatformunda ödeme yapmaktır.\nTasarımınız mühendisler tarafından\nanaliz edilecektir.",
+      "image": "/images/3.jpg"
+    },
+    {
+      "id": 4,
+      "title": "Parçalar Gönderildi!",
+      "description": "Kısa süre içerisinde sipariş ettiğiniz\nparçalar doğrudan teslimat adresinize\nteslim edilecektir. Paketinizi\nistediğiniz zaman kişisel\nhesabınızdan takip edebilirsiniz.",
+      "image": "/images/4.png"
+    }
+  ]
+  
